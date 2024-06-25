@@ -1,9 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  MapContainer, TileLayer, Marker, Popup,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -25,13 +23,14 @@ const Map = ({ user }) => {
     { lat: 13.0827, lng: 80.2707, description: 'Chennai' },
   ]);
 
-  return <MapContainer
+  return (
+    <MapContainer
       center={markers[Math.floor(Math.random() * markers.length)]}
       zoom={20}
-      style={{ height: '100vh', width: '100%' }}
+      style={{ height: '90vh', width: '100%' }}
     >
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        url='https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
         attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
       {markers.map((marker, index) => (
@@ -43,7 +42,8 @@ const Map = ({ user }) => {
           <Popup>{marker.description}</Popup>
         </Marker>
       ))}
-    </MapContainer>;
+    </MapContainer>
+  );
 };
 
 export default Map;
