@@ -19,7 +19,7 @@ const Login = () => {
     try {
       if (username && password) {
         await login(username, password);
-        navigate('/home');
+        navigate('/');
       }
     } catch (err) {
       setError(err.message);
