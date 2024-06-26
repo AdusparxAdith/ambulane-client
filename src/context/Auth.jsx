@@ -4,6 +4,7 @@ import {
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import config from '../config';
 
 const AuthContext = createContext();
 
@@ -16,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/user/verify', {
+        const response = await axios.get(`${config.APP_SERVER_URL}/user/verify`, {
           withCredentials: true,
         });
         if (response.statusText === 'OK') {
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      const newSocket = io('http://localhost:8081', {
+      const newSocket = io(config.SOCKET_SERVER_URL, {
         withCredentials: true,
       });
       setSocket(newSocket);
@@ -57,7 +58,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     const response = await axios.post(
-      'http://localhost:8080/user/login',
+      `${config.APP_SERVER_URL}/user/login`,
       { username, password },
       { withCredentials: true },
     );
@@ -70,7 +71,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.get('http://localhost:8080/user/logout', {
+      await axios.get(`${config.APP_SERVER_URL}/user/logout`, {
         withCredentials: true,
       });
       localStorage.setItem('user', null);

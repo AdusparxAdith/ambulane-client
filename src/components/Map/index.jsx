@@ -9,6 +9,7 @@ import L from 'leaflet';
 import axios from 'axios';
 import { useLocation } from '../../context/Location.jsx';
 import { useAuth } from '../../context/Auth.jsx';
+import config from '../../config';
 
 // Custom icon definition
 const ambulanceIcon = new L.Icon({
@@ -40,7 +41,7 @@ const Map = () => {
     if (location) {
       interval = setInterval(async () => {
         const response = await axios.post(
-          'http://localhost:8080/location/nearby',
+          `${config.APP_SERVER_URL}/location/nearby`,
           { coordinates: [location.longitude, location.latitude], type: user.type },
           {
             withCredentials: true,
