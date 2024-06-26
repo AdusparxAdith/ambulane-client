@@ -1,12 +1,16 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import {
+  createContext, useContext, useState, useEffect,
+} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +32,28 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchUser();
-  }, []);
+  }, [navigate]);
+
+  useEffect(() => {
+    if (user) {
+      const newSocket = io('http://localhost:8081', {
+        withCredentials: true,
+      });
+      setSocket(newSocket);
+
+      newSocket.on('connect', () => {
+        console.log('Connected to socket server');
+      });
+
+      newSocket.on('disconnect', () => {
+        console.log('Disconnected from socket server');
+      });
+
+      return () => {
+        newSocket.close();
+      };
+    }
+  }, [user]);
 
   const login = async (username, password) => {
     const response = await axios.post(
@@ -57,13 +82,13 @@ export const AuthProvider = ({ children }) => {
 
   const contextValue = {
     user,
+    socket,
+    loading,
     login,
     logout,
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);
