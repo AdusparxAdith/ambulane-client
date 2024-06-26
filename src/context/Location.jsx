@@ -7,8 +7,23 @@ const LocationContext = createContext();
 
 export const LocationProvider = ({ children }) => {
   const { user, socket } = useAuth(); // Get the socket from AuthContext
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
   const [sharingLocation, setSharingLocation] = useState(false); // Default to false
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation({ latitude, longitude });
+          // Send the location to the backend using the socket
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        },
+      );
+    }
+  }, []);
 
   useEffect(() => {
     let interval;
