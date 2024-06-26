@@ -7,6 +7,8 @@ import {
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
+import { useLocation } from '../../context/Location.jsx';
+import { useAuth } from '../../context/Auth.jsx';
 
 // Custom icon definition
 const ambulanceIcon = new L.Icon({
@@ -28,26 +30,32 @@ const signalIcon = new L.Icon({
   shadowSize: [60, 60],
 });
 
-const Map = ({ location, user }) => {
+const Map = () => {
+  const { user } = useAuth();
+  const { location } = useLocation();
+
   const [markers, setMarkers] = useState([]);
   useEffect(() => {
-    const interval = setInterval(async () => {
-      const response = await axios.post(
-        'http://localhost:8080/location/nearby',
-        { coordinates: [location.longitude, location.latitude] },
-        {
-          withCredentials: true,
-        },
-      );
-      setMarkers(response.data);
-    }, 5000);
+    let interval;
+    if (location) {
+      interval = setInterval(async () => {
+        const response = await axios.post(
+          'http://localhost:8080/location/nearby',
+          { coordinates: [location.longitude, location.latitude], type: user.type },
+          {
+            withCredentials: true,
+          },
+        );
+        setMarkers(response.data);
+      }, 2000);
+    }
 
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [location]);
 
-  return (
+  return location ? (
     <MapContainer
       center={{ lat: location.latitude, lng: location.longitude }}
       zoom={20}
@@ -57,16 +65,25 @@ const Map = ({ location, user }) => {
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
+      <Marker
+        key={user.id}
+        position={{ lat: location.latitude, lng: location.longitude }}
+        icon={user.type === 1 ? ambulanceIcon : signalIcon}
+      >
+        <Popup>{"You're here"}</Popup>
+      </Marker>
       {markers.map((marker) => (
         <Marker
-          key={marker.username}
+          key={marker.id}
           position={marker.location}
           icon={marker.type === 1 ? ambulanceIcon : signalIcon}
         >
-          <Popup>{marker.id === user.id ? "You're here" : marker.username}</Popup>
+          <Popup>{marker.name}</Popup>
         </Marker>
       ))}
     </MapContainer>
+  ) : (
+    <></>
   );
 };
 
