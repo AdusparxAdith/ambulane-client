@@ -35,9 +35,24 @@ const Map = () => {
   const { location } = useLocation();
   const [markers, setMarkers] = useState([]);
 
+  // For Ambulance Users
+  useEffect(() => {
+    async function fetchNearby() {
+      if (location) {
+        const response = await axios.post('/location/nearby', {
+          coordinates: [location.longitude, location.latitude],
+          type: user.type,
+        });
+        setMarkers(response.data);
+      }
+    }
+    fetchNearby();
+  }, [location]);
+
+  // For Signal Users
   useEffect(() => {
     let interval;
-    if (location) {
+    if (user.type === 2) {
       interval = setInterval(async () => {
         const response = await axios.post('/location/nearby', {
           coordinates: [location.longitude, location.latitude],
@@ -50,7 +65,7 @@ const Map = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [location]);
+  }, [user]);
 
   return location ? (
     <MapContainer

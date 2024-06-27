@@ -10,11 +10,10 @@ instance.defaults.withCredentials = true;
 
 instance.interceptors.response.use(
   (response) => {
-    if (response.statusText === 'OK') response.ok = true;
+    if (response.status === 200) response.ok = true;
     return response;
   },
   (error) => {
-    if (error?.response?.status === 401) window.location = window.location.host;
     error.message = error.request.responseText;
     throw new Error(error);
   },

@@ -8,6 +8,8 @@ export default function Menu() {
   const { user, logout } = useAuth();
   const { sharingLocation, setSharingLocation } = useLocation();
 
+  const isTestUser = user.test;
+
   return (
     <div className="fixed bottom-10 rounded-3xl shadow-md overflow-hidden z-[2000] -translate-x-1/2 bg-white  left-1/2 dark:bg-gray-50 h-[10vh]">
       <div className="flex justify-center items-center mx-auto h-full">
@@ -27,12 +29,12 @@ export default function Menu() {
             >
               <LuAlertTriangle size={25} color={'grey'} />
               <span className="mt-1">Alert</span>
-              <sub className="text-xs[2px]">(disabled)</sub>
+              {isTestUser && <sub className="text-xs[2px]">(disabled)</sub>}
             </button>
             <button
               data-tooltip-target="tooltip-home"
               type="button"
-              disabled={user.test}
+              disabled={isTestUser}
               className="
           inline-flex flex-col h-full w-[100px] items-center
           justify-center p-
@@ -47,13 +49,13 @@ export default function Menu() {
                 <>
                   <LuSquare size={25} color={'grey'} fill={'grey'} />
                   <span className="mt-2">Stop</span>
-                  <sub className="text-xs[2px]">(disabled)</sub>
+                  {isTestUser && <sub className="text-xs[2px]">(disabled)</sub>}
                 </>
               ) : (
                 <>
                   <LuPlay size={25} color={'grey'} fill={'grey'} />
                   <span className="mt-1">Start</span>
-                  <sub className="text-xs[2px]">(disabled)</sub>
+                  {isTestUser && <sub className="text-xs[2px]">(disabled)</sub>}
                 </>
               )}
             </button>

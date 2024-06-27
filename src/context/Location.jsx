@@ -2,6 +2,8 @@ import {
   createContext, useContext, useState, useEffect,
 } from 'react';
 import { useAuth } from './Auth.jsx'; // Import the useAuth hook
+import { moveTowards } from '../utils/location';
+import constants from '../constants/index';
 
 const LocationContext = createContext();
 
@@ -9,6 +11,30 @@ export const LocationProvider = ({ children }) => {
   const { user, socket } = useAuth(); // Get the socket from AuthContext
   const [location, setLocation] = useState(null);
   const [sharingLocation, setSharingLocation] = useState(false); // Default to false
+
+  // Only for test ambulance
+  useEffect(() => {
+    if (user && user.test) {
+      // Speed in meters per second (adjust as needed)
+      const speed = constants.TEST_AMBULANCE_SPEED;
+
+      // Start moving towards the end point when the component mounts
+      const intervalId = moveTowards(speed, (currentLocation) => {
+        setLocation({ latitude: currentLocation.lat, longitude: currentLocation.lng });
+        // Send the updated location to the backend using the socket
+        if (socket) {
+          console.log('Updating test location', new Date());
+          socket.emit('update-location', {
+            user,
+            coordinates: [currentLocation.lng, currentLocation.lat],
+          });
+        }
+      });
+
+      // Cleanup the interval when the component unmounts
+      return () => clearInterval(intervalId);
+    }
+  }, [socket, user]);
 
   useEffect(() => {
     if (user && navigator.geolocation) {
