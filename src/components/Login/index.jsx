@@ -22,7 +22,8 @@ const Login = () => {
         navigate('/');
       }
     } catch (err) {
-      setError(err.message);
+      console.log(err);
+      setError('Authentication Error');
     }
   };
 

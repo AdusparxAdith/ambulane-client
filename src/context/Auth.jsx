@@ -1,9 +1,9 @@
 import {
   createContext, useContext, useState, useEffect,
 } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import axios from '../utils/axios';
 import config from '../config';
 
 const AuthContext = createContext();
@@ -17,10 +17,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`${config.APP_SERVER_URL}/user/verify`, {
-          withCredentials: true,
-        });
-        if (response.statusText === 'OK') {
+        const response = await axios.get('/user/verify');
+        if (response.ok) {
           localStorage.setItem('user', JSON.stringify(response.data.user));
           setUser(response.data.user);
           navigate('/');
@@ -57,12 +55,8 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   const login = async (username, password) => {
-    const response = await axios.post(
-      `${config.APP_SERVER_URL}/user/login`,
-      { username, password },
-      { withCredentials: true },
-    );
-    if (!response.statusText === 'OK') {
+    const response = await axios.post('/user/login', { username, password });
+    if (!response.ok) {
       throw new Error('Invalid credentials');
     }
     localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -71,9 +65,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.get(`${config.APP_SERVER_URL}/user/logout`, {
-        withCredentials: true,
-      });
+      await axios.get('/user/logout');
       localStorage.setItem('user', null);
       setUser(null);
     } catch (error) {

@@ -6,10 +6,9 @@ import {
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import axios from 'axios';
+import axios from '../../utils/axios';
 import { useLocation } from '../../context/Location.jsx';
 import { useAuth } from '../../context/Auth.jsx';
-import config from '../../config';
 
 // Custom icon definition
 const ambulanceIcon = new L.Icon({
@@ -34,19 +33,16 @@ const signalIcon = new L.Icon({
 const Map = () => {
   const { user } = useAuth();
   const { location } = useLocation();
-
   const [markers, setMarkers] = useState([]);
+
   useEffect(() => {
     let interval;
     if (location) {
       interval = setInterval(async () => {
-        const response = await axios.post(
-          `${config.APP_SERVER_URL}/location/nearby`,
-          { coordinates: [location.longitude, location.latitude], type: user.type },
-          {
-            withCredentials: true,
-          },
-        );
+        const response = await axios.post('/location/nearby', {
+          coordinates: [location.longitude, location.latitude],
+          type: user.type,
+        });
         setMarkers(response.data);
       }, 2000);
     }
