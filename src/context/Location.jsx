@@ -56,34 +56,39 @@ export const LocationProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    let interval;
+    let watchId;
+
     if (sharingLocation) {
-      // Check if sharingLocation is enabled
-      interval = setInterval(() => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              setLocation({ latitude, longitude });
-              // Send the location to the backend using the socket
-              if (socket) {
-                console.log('Updating location', new Date());
-                socket.emit('update-location', { user, coordinates: [longitude, latitude] });
-              }
-            },
-            (error) => {
-              console.error('Error getting location:', error);
-            },
-          );
-        } else {
-          console.error('Geolocation is not supported by this browser.');
-        }
-      }, 10000); // Send location every 5 seconds
-    } else if (interval) clearInterval(interval);
+      if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setLocation({ latitude, longitude });
+            // Send the location to the backend using the socket
+            if (socket) {
+              console.log('Updating location', new Date());
+              socket.emit('update-location', { user, coordinates: [longitude, latitude] });
+            }
+          },
+          (error) => {
+            console.error('Error getting location:', error);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+          },
+        );
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    } else if (watchId !== undefined) {
+      navigator.geolocation.clearWatch(watchId);
+    }
 
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (watchId !== undefined) {
+        navigator.geolocation.clearWatch(watchId);
       }
     };
   }, [sharingLocation, socket]);
