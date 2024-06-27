@@ -16,10 +16,10 @@ export const LocationProvider = ({ children }) => {
         (position) => {
           const { latitude, longitude } = position.coords;
 
-          if (user.type === 1) setLocation({ latitude, longitude });
-          else {
+          if (user.type === 2 || user.test) {
             setLocation({ latitude: user.location.lat, longitude: user.location.lng });
-          }
+          } else setLocation({ latitude, longitude });
+
           // Send the location to the backend using the socket
         },
         (error) => {

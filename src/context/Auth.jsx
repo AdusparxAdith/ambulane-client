@@ -35,18 +35,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      const newSocket = io(config.SOCKET_SERVER_URL, {
-        withCredentials: true,
-      });
+      const newSocket = io(config.SOCKET_SERVER_URL, { withCredentials: true });
       setSocket(newSocket);
 
-      newSocket.on('connect', () => {
-        console.log('Connected to socket server');
-      });
-
-      newSocket.on('disconnect', () => {
-        console.log('Disconnected from socket server');
-      });
+      newSocket.on('connect', () => console.log('Connected to socket server'));
+      newSocket.on('disconnect', () => console.log('Disconnected from socket server'));
 
       return () => {
         newSocket.close();
@@ -56,9 +49,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     const response = await axios.post('/user/login', { username, password });
-    if (!response.ok) {
-      throw new Error('Invalid credentials');
-    }
+    if (!response.ok) throw new Error('Invalid credentials');
+
     localStorage.setItem('user', JSON.stringify(response.data.user));
     setUser(response.data.user);
   };
@@ -66,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await axios.get('/user/logout');
-      localStorage.setItem('user', null);
+      localStorage.removeItem('user');
       setUser(null);
     } catch (error) {
       console.error(error);

@@ -17,19 +17,22 @@ export default function Menu() {
             <button
               data-tooltip-target="tooltip-home"
               type="button"
+              disabled={user.test}
               className="inline-flex flex-col h-full w-[100px] items-center justify-center p-4  group
           hover:bg-gray-200
           text-slate-400
           text-xs
           uppercase"
-              onClick={() => logout()}
+              onClick={() => alert('Notifying nearby signals')}
             >
               <LuAlertTriangle size={25} color={'grey'} />
               <span className="mt-1">Alert</span>
+              <sub className="text-xs[2px]">(disabled)</sub>
             </button>
             <button
               data-tooltip-target="tooltip-home"
               type="button"
+              disabled={user.test}
               className="
           inline-flex flex-col h-full w-[100px] items-center
           justify-center p-
@@ -44,11 +47,13 @@ export default function Menu() {
                 <>
                   <LuSquare size={25} color={'grey'} fill={'grey'} />
                   <span className="mt-2">Stop</span>
+                  <sub className="text-xs[2px]">(disabled)</sub>
                 </>
               ) : (
                 <>
                   <LuPlay size={25} color={'grey'} fill={'grey'} />
                   <span className="mt-1">Start</span>
+                  <sub className="text-xs[2px]">(disabled)</sub>
                 </>
               )}
             </button>
