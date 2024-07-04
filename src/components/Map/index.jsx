@@ -9,6 +9,7 @@ import L from 'leaflet';
 import axios from '../../utils/axios';
 import { useLocation } from '../../context/Location.jsx';
 import { useAuth } from '../../context/Auth.jsx';
+import MapCenterer from './MapCenter.jsx';
 
 // Custom icon definition
 const ambulanceIcon = new L.Icon({
@@ -77,6 +78,7 @@ const Map = () => {
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
+      <MapCenterer location={location} />
       <Marker
         key={user.id}
         position={{ lat: location.latitude, lng: location.longitude }}

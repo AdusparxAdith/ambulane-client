@@ -58,30 +58,30 @@ export const LocationProvider = ({ children }) => {
   useEffect(() => {
     let watchId;
 
-    if (sharingLocation) {
-      if (navigator.geolocation) {
-        watchId = navigator.geolocation.watchPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            setLocation({ latitude, longitude });
-            // Send the location to the backend using the socket
+    if (navigator.geolocation) {
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation({ latitude, longitude });
+          // Send the location to the backend using the socket
+          if (sharingLocation) {
             if (socket) {
               console.log('Updating location', new Date());
               socket.emit('update-location', { user, coordinates: [longitude, latitude] });
             }
-          },
-          (error) => {
-            console.error('Error getting location:', error);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0,
-          },
-        );
-      } else {
-        console.error('Geolocation is not supported by this browser.');
-      }
+          } else {
+            console.debug('Location sharing off');
+          }
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        },
+      );
     } else if (watchId !== undefined) {
       navigator.geolocation.clearWatch(watchId);
     }
