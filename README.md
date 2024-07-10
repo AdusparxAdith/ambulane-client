@@ -1,13 +1,20 @@
-# React + Vite
+## Description
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Developing a web application aimed at optimizing ambulance response times in urban India. Utilizing real-time geolocation tracking, the app alerts nearby traffic signals to prioritize ambulance passage, effectively reducing delays and improving emergency response. Proud to contribute to public safety by leveraging technology to mitigate critical issues in healthcare infrastructure.
 
 ## Usage
+
+## Build local server
+
+```sh
+git clone https://github.com/AdusparxAdith/ambulane-client.git
+cd ambulane-client
+npm i
+npm run dev
+```
+# Live Demo
+
+The under-developing demo is hosted on Netlify and can be accessed here [https://ambulane.netlify.app/](https://ambulane.netlify.app/)
 
 ### Login Instructions
 
@@ -28,3 +35,12 @@ Currently, two official plugins are available:
 - **Username:** realuser
 - **Password:** password
 - **Instructions:** This account allows you to test real-time movement updates. You can simulate movement to observe how the system tracks your location in real-time on the map.
+
+
+# Contributing
+
+Any new ideas want to add to the project are welcome. Please submit a pull request or open up an issue and we can discuss further.
+
+# License
+
+This project is licensed under the MIT License.
